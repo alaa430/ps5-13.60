@@ -10,7 +10,7 @@ background.jpg
 ./src/utils/rop_slave.js
 ./src/utils/mem.js
 ./src/kexp.js
-./relapse_exploit.js
+./src/relapse_exploit.js
 ./src/rop.js
 ./src/main.js
 ./src/site.js
