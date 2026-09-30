@@ -15,9 +15,8 @@ background.jpg
 ./src/main.js
 ./src/site.js
 ./payloads/elfldr-ps5-1360.elf
-./payloads/OnionHEN.elf
+./payloads/etaHEN.elf
 ./payloads/kexp_2026_05_25.bin
-./assets/index.css
 ./offsets/10.00.js
 
 NETWORK:
