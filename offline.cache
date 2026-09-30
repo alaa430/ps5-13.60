@@ -4,7 +4,9 @@ CACHE MANIFEST
 index.html
 background.jpg
 ./src/firmware.js
+./src/webkit.js
 ./src/utils/syscalls.js
+./src/utils/mem.js
 ./src/kexp.js
 ./src/rop.js
 ./src/main.js
