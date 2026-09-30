@@ -1,4 +1,4 @@
-// 11.20 -- generated from libSceNKWebKit / libkernel_web /
+// 11.40 -- generated from libSceNKWebKit / libkernel_web /
 // libSceLibcInternal. file offset = rva + 0x4000
 
 // host-constructor candidates: webkitBase = nativeCtorAddr - hc
@@ -409,7 +409,7 @@ let syscall_map = {
 const OFFSET_KERNEL_STACK_COOKIE                = 0x00000930;
 const OFFSET_KERNEL_STACK_SYS_SCHED_YIELD_RET   = 0x00000808;
 const OFFSET_KERNEL_DATA                        = 0x00D30000;
-const OFFSET_KERNEL_SYS_SCHED_YIELD_RET         = 0x00627F22;
+const OFFSET_KERNEL_SYS_SCHED_YIELD_RET         = 0x00628932;
 const OFFSET_KERNEL_ALLPROC                     = 0x035A5D70;
 const OFFSET_KERNEL_SECURITY_FLAGS              = 0x01ABC064;
 const OFFSET_KERNEL_TARGETID                    = 0x01ABC06D;
