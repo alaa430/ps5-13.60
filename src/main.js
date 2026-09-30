@@ -80,25 +80,13 @@ function log(message, type = "log") {
   window.writeLog(message, type);
 }
 
-function watchR2(onPress) {
-  function onKey(event) {
-    if (event.key !== "F8" || event.code !== "Unidentified") return;
-    window.removeEventListener("keydown", onKey, true);
-    event.preventDefault();
-    onPress();
-  }
-
-  log("press R2 to load kstuff, shadowmountplus and etaHEN", "info");
-  window.addEventListener("keydown", onKey, true);
-}
-
 const ROP_WAIT_MS = 20000;
 
 function jbmark(tag, detail) {
   try {
     if (window.jb && typeof window.jb.mark === "function")
       window.jb.mark(tag, String(detail));
-  } catch (e) {}
+  } catch (e) { }
 }
 
 async function prepareRop(p) {
@@ -281,14 +269,16 @@ async function main(userlandRW) {
   if (result.payloads) {
     log("kernel exploit complete", "info");
     log("elfldr is listening on port 9021", "info");
-    watchR2(async () => {
-      try {
-        const { loadOptionalPayloads } = await import("./kexp.js");
-        await loadOptionalPayloads(p, chain, (message) => log(message, "info"));
-      } catch (error) {
-        log(error instanceof Error ? error.message : String(error), "error");
+
+    try {
+      if (typeof window.loadOptionalPayloads === "function") {
+        await window.loadOptionalPayloads(p, chain, (message, type) => log(message, type || "info"));
+      } else {
+        log("loadOptionalPayloads function not found in index.html", "error");
       }
-    });
+    } catch (error) {
+      log(error instanceof Error ? error.message : String(error), "error");
+    }
   } else {
     log("kernel chain complete: root and sandbox escape are active", "info");
   }

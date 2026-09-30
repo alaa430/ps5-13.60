@@ -1,36 +1,22 @@
 import { establishPrimitive } from "./webkit.js";
 import { installWindowP } from "./utils/mem.js";
 
-const output = document.getElementById("console");
-
-function writeLog(message, type = "log", replace = false) {
-  let line = replace ? output.lastElementChild : null;
-  if (!line) {
-    line = document.createElement("div");
-    output.appendChild(line);
-  }
-  let marker = "*";
-  if (type === "error") marker = "-";
-  if (type === "info" || type === "success") marker = "+";
-  line.textContent = `[${marker}] ${message}`;
-  output.scrollTop = output.scrollHeight;
-}
+const cstat = document.getElementById("cstat");
 
 function writeEvent(name, detail, type) {
-  writeLog(detail == null || detail === "" ? name : `${name}: ${detail}`,
-    type || (name === "Failed" ? "error" : "log"));
+  window.writeLog(detail == null || detail === "" ? name : `${name}: ${detail}`,
+    type || (name === "Failed" ? "error" : "i"));
 }
 
-window.writeLog = writeLog;
 window.jb = { mark: writeEvent };
 
 async function getPrimitive() {
-  writeLog("Starting WebKit exploit");
+  window.writeLog("Starting WebKit exploit", "i");
   const primitive = installWindowP(await establishPrimitive(writeEvent));
   if (!primitive || typeof primitive.read8 !== "function")
     throw new Error("Memory primitive unavailable");
 
-  writeLog("ARW ready", "success");
+  window.writeLog("ARW ready", "g");
   return primitive;
 }
 
@@ -52,14 +38,28 @@ async function run() {
   const rejection = window.firmware.rejection();
   if (rejection)
     throw new Error(rejection);
-  writeLog("Credits: ntfargo, ufm42, Sonic_Iso, Jordy, Dr. Yenyen, TheFlow, SlidyBat, Flatz, cow, nhk, bollarz, Sleirsgoevy, EchoStretch, EarthOnion", "info");
-  writeLog(`Agent: ${navigator.userAgent}`, "info");
-  writeLog(`Firmware: ${window.fw_str}`, "info");
+  window.writeLog("Credits: ntfargo, ufm42, Sonic_Iso, Jordy, Dr. Yenyen, TheFlow, SlidyBat, Flatz, cow, nhk, bollarz, Sleirsgoevy, EchoStretch, EarthOnion", "i");
+  window.writeLog(`Agent: ${navigator.userAgent}`, "i");
+  window.writeLog(`Firmware: ${window.fw_str}`, "i");
   const primitive = await getPrimitive();
-  writeLog(`WebKit base: 0x${getWebKitBase().toString(16)}`, "info");
+  window.writeLog(`WebKit base: 0x${getWebKitBase().toString(16)}`, "g");
 
   await import("./relapse_exploit.js");
   await main(primitive);
 }
 
-run().catch((error) => writeLog(error instanceof Error ? error.message : String(error), "error"));
+window.runRelapseExploit = async function () {
+  try {
+    await run();
+    if (cstat) {
+      cstat.textContent = 'DONE';
+      cstat.style.color = 'var(--green)';
+    }
+  } catch (error) {
+    window.writeLog(error instanceof Error ? error.message : String(error), "e");
+    if (cstat) {
+      cstat.textContent = 'FAILED';
+      cstat.style.color = 'var(--red)';
+    }
+  }
+};
