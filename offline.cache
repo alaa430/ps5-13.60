@@ -3,17 +3,12 @@ CACHE MANIFEST
 
 index.html
 background.jpg
-src/firmware.js
-src/kexp.js
-src/main.js
-src/relapse_exploit.js
-src/rop.js
-src/site.js
-src/webkit.js
-src/module/int64.js
-src/module/mem.js
-src/module/rop_slave.js
-src/module/syscalls.js
+./src/firmware.js
+./src/utils/syscalls.js
+./src/kexp.js
+./src/rop.js
+./src/main.js
+./src/site.js
 payloads/elfldr-ps5-1360.elf
 payloads/etaHEN.elf
 payloads/kexp_2026_05_25.bin
