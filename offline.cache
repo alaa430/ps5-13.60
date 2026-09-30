@@ -10,10 +10,10 @@ src/relapse_exploit.js
 src/rop.js
 src/site.js
 src/webkit.js
-src/utils/int64.js
-src/utils/mem.js
-src/utils/rop_slave.js
-src/utils/syscalls.js
+src/module/int64.js
+src/module/mem.js
+src/module/rop_slave.js
+src/module/syscalls.js
 payloads/elfldr-ps5-1360.elf
 payloads/etaHEN.elf
 payloads/kexp_2026_05_25.bin
