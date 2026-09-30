@@ -295,5 +295,6 @@ async function main(userlandRW) {
 }
 
 const fwScript = document.createElement("script");
-fwScript.setAttribute("src", `offsets/${window.fw_str}.js`);
 document.body.appendChild(fwScript);
+
+fwScript.setAttribute("src", `offsets/${window.fw_str}.js?v=` + Date.now());
