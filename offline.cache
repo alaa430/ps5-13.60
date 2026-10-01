@@ -1,19 +1,29 @@
 CACHE MANIFEST
-# PS5 Offline Cache Custom - 2026
 
-index.html 
-elf.html
-./offsets/10.00.js 
-./payloads/elfldr-ps5-1360.elf 
-./payloads/kexp_2026_05_25.bin 
-core.js
-exploit.js 
-firmware.js
+# Version 1.0 - Offline Host
+
+index.html
+exploit.js
 kexp.js
-main.js
-mem.js
-payloads.js
 rop.js
 rop_slave.js
 syscalls.js
-int64.js
+core.js
+firmware.js
+net64.js
+mem.js
+payloads.js
+cat.jpg
+relapse.html
+
+api/elfldr.php
+api/payload.php
+api/serve.js
+offsets/10.00.js
+payloads/elfldr-ps5-1360.elf
+payloads/etaHEN.elf
+payloads/kexp_2026_05_25.bin
+
+
+NETWORK:
+*
