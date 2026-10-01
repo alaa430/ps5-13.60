@@ -2,7 +2,6 @@ CACHE MANIFEST
 # PS5 Offline Cache Custom - 2026
 
 index.html 
-main.css 
 offsets/10.00.js 
 payloads/ftpsrv-ps5.elf 
 payloads/elfldr-ps5-1360.elf 
