@@ -1,6 +1,3 @@
-// PS5 10.40 offsets - generated from decrypted firmware modules
-// source: 10_Firmware 10.40.00_PS5UPDATE
-
 const OFFSET_wk_host_constructor_candidates = [0x00002C00, 0x00005178, 0x00005690];
 const OFFSET_wk_vtable_first_element     = 0;
 const OFFSET_wk_memset_import                  = 0x035CFCA8;
@@ -396,6 +393,7 @@ const OFFSET_KERNEL_DATA                       = 0x00CC0000;
 
 window.KRW = {
     firmware: "10.40",
+    security_flags: OFFSET_KERNEL_SECURITY_FLAGS,
     kernelData: OFFSET_KERNEL_DATA,
     allproc:    OFFSET_KERNEL_ALLPROC,
     rootvnode:  OFFSET_KERNEL_ROOTVNODE,

