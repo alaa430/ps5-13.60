@@ -134,6 +134,20 @@ async function connectToElfldr(p, chain) {
   p.write4(address, 0x3d230210); // AF_INET, port 9021
   p.write4(address.add32(4), 0x0100007f); // 127.0.0.1
 
+  for (let attempt = 0; attempt < 80; attempt++) {
+    const socket = await chain.syscall(SYS_SOCKET, 2, 1, 0);
+    const fd = socket.low | 0;
+    if (fd >= 0) {
+
+      const connected = await chain.syscall(SYS_CONNECT, fd, address, 16);
+      if ((connected.low >>> 0) === 0) return fd;
+      await chain.syscall(SYS_CLOSE, fd);
+    }
+    await new Promise((resolve) => setTimeout(resolve, 150));
+  }
+
+  throw new Error("elfldr is not listening on port 9021");
+}
   for (let attempt = 0; attempt < 40; attempt++) {
     const socket = await chain.syscall(SYS_SOCKET, 2, 1, 0);
     const fd = socket.low | 0;
